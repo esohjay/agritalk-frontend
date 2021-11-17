@@ -24,7 +24,10 @@ export const useUserActions = () => {
   const createUser = async (info) => {
     dispatch({ type: USER_REGISTER_REQUEST });
     try {
-      const { data } = await Axios.post(`/api/users/`, info);
+      const { data } = await Axios.post(
+        `${process.env.REACT_APP_URL}/api/users/`,
+        info
+      );
       dispatch({ type: USER_REGISTER_SUCCESS, payload: data });
       localStorage.setItem("userInfo", JSON.stringify(data));
     } catch (error) {
@@ -39,7 +42,10 @@ export const useUserActions = () => {
   const signinUser = async (info) => {
     dispatch({ type: USER_SIGNIN_REQUEST });
     try {
-      const { data } = await Axios.post(`/api/users/signin`, info);
+      const { data } = await Axios.post(
+        `${process.env.REACT_APP_URL}/api/users/signin`,
+        info
+      );
       dispatch({ type: USER_SIGNIN_SUCCESS, payload: data });
       console.log("dispatch");
       localStorage.setItem("userInfo", JSON.stringify(data));
@@ -56,7 +62,9 @@ export const useUserActions = () => {
   const getUserDetails = async (id) => {
     dispatch({ type: USER_DETAILS_REQUEST });
     try {
-      const { data } = await Axios.get(`/api/users/${id}`);
+      const { data } = await Axios.get(
+        `${process.env.REACT_APP_URL}/api/users/${id}`
+      );
       dispatch({ type: USER_DETAILS_SUCCESS, payload: data });
     } catch (error) {
       const message =
@@ -70,7 +78,10 @@ export const useUserActions = () => {
   const updateUser = async (info) => {
     dispatch({ type: USER_UPDATE_REQUEST });
     try {
-      const { data } = await Axios.put(`/api/users/${info.id}`, info);
+      const { data } = await Axios.put(
+        `${process.env.REACT_APP_URL}/api/users/${info.id}`,
+        info
+      );
       dispatch({ type: USER_UPDATE_SUCCESS, payload: data });
       localStorage.setItem("userInfo", JSON.stringify(data));
     } catch (error) {
@@ -85,7 +96,10 @@ export const useUserActions = () => {
   const updatePassword = async (info) => {
     dispatch({ type: UPDATE_PASSWORD_REQUEST });
     try {
-      const { data } = await Axios.put(`/api/users/password/${info.id}`, info);
+      const { data } = await Axios.put(
+        `${process.env.REACT_APP_URL}/api/users/password/${info.id}`,
+        info
+      );
       dispatch({ type: UPDATE_PASSWORD_SUCCESS, payload: data });
       localStorage.setItem("userInfo", JSON.stringify(data));
     } catch (error) {

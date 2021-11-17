@@ -38,7 +38,11 @@ export const useCommentActions = () => {
     dispatch({ type: CREATE_COMMENT_REQUEST });
     console.log(userInfo);
     try {
-      const { data } = await Axios.post(`/api/comments/${id}`, info, header);
+      const { data } = await Axios.post(
+        `${process.env.REACT_APP_URL}/api/comments/${id}`,
+        info,
+        header
+      );
       dispatch({ type: CREATE_COMMENT_SUCCESS, payload: data });
     } catch (error) {
       const message =
@@ -55,7 +59,7 @@ export const useCommentActions = () => {
 
     try {
       const { data } = await Axios.put(
-        `/api/comments/${info.cId}`,
+        `${process.env.REACT_APP_URL}/api/comments/${info.cId}`,
         info,
         header
       );
@@ -75,7 +79,7 @@ export const useCommentActions = () => {
 
     try {
       const { data } = await Axios.delete(
-        `/api/comments/${id}`,
+        `${process.env.REACT_APP_URL}/api/comments/${id}`,
 
         header
       );
@@ -94,7 +98,7 @@ export const useCommentActions = () => {
     dispatch({ type: CREATE_REPLY_REQUEST });
     try {
       const { data } = await Axios.post(
-        `/api/comments/reply/${id}`,
+        `${process.env.REACT_APP_URL}/api/comments/reply/${id}`,
         info,
         header
       );
@@ -113,7 +117,11 @@ export const useCommentActions = () => {
     dispatch({ type: LIKE_COMMENT_REQUEST });
 
     try {
-      const { data } = await Axios.put(`/api/comments/like/${id}`, {}, header);
+      const { data } = await Axios.put(
+        `${process.env.REACT_APP_URL}/api/comments/like/${id}`,
+        {},
+        header
+      );
 
       dispatch({ type: LIKE_COMMENT_SUCCESS, payload: data });
     } catch (error) {
@@ -130,7 +138,7 @@ export const useCommentActions = () => {
 
     try {
       const { data } = await Axios.put(
-        `/api/comments/reply/${info.id}`,
+        `${process.env.REACT_APP_URL}/api/comments/reply/${info.id}`,
         info,
         header
       );
@@ -149,7 +157,7 @@ export const useCommentActions = () => {
 
     try {
       const { data } = await Axios.delete(
-        `/api/comments/reply/${id}`,
+        `${process.env.REACT_APP_URL}/api/comments/reply/${id}`,
 
         header
       );
@@ -168,7 +176,7 @@ export const useCommentActions = () => {
 
     try {
       const { data } = await Axios.put(
-        `/api/comments/like-reply/${id}`,
+        `${process.env.REACT_APP_URL}/api/comments/like-reply/${id}`,
         {},
         header
       );

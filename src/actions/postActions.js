@@ -40,7 +40,11 @@ export const usePostActions = () => {
     dispatch({ type: CREATE_POST_REQUEST });
     console.log(userInfo);
     try {
-      const { data } = await Axios.post(`/api/posts`, info, header);
+      const { data } = await Axios.post(
+        `${process.env.REACT_APP_URL}/api/posts`,
+        info,
+        header
+      );
       dispatch({ type: CREATE_POST_SUCCESS, payload: data });
     } catch (error) {
       const message =
@@ -56,7 +60,7 @@ export const usePostActions = () => {
     dispatch({ type: ALL_POSTS_REQUEST });
     try {
       const { data } = await Axios.get(
-        `/api/posts?page=${page}&limit=${limit}`
+        `${process.env.REACT_APP_URL}/api/posts?page=${page}&limit=${limit}`
       );
       dispatch({ type: ALL_POSTS_SUCCESS, payload: data });
     } catch (error) {
@@ -71,7 +75,9 @@ export const usePostActions = () => {
   const getPostDetails = async (id) => {
     dispatch({ type: POST_DETAILS_REQUEST });
     try {
-      const { data } = await Axios.get(`/api/posts/${id}`);
+      const { data } = await Axios.get(
+        `${process.env.REACT_APP_URL}/api/posts/${id}`
+      );
       dispatch({ type: POST_DETAILS_SUCCESS, payload: data });
     } catch (error) {
       const message =
@@ -85,7 +91,10 @@ export const usePostActions = () => {
   const getUserPosts = async () => {
     dispatch({ type: USER_POSTS_REQUEST });
     try {
-      const { data } = await Axios.get(`/api/posts/user`, header);
+      const { data } = await Axios.get(
+        `${process.env.REACT_APP_URL}/api/posts/user`,
+        header
+      );
       dispatch({ type: USER_POSTS_SUCCESS, payload: data });
     } catch (error) {
       const message =
@@ -100,7 +109,11 @@ export const usePostActions = () => {
     dispatch({ type: LIKE_POST_REQUEST });
 
     try {
-      const { data } = await Axios.put(`/api/posts/like/${id}`, {}, header);
+      const { data } = await Axios.put(
+        `${process.env.REACT_APP_URL}/api/posts/like/${id}`,
+        {},
+        header
+      );
 
       dispatch({ type: LIKE_POST_SUCCESS, payload: data });
     } catch (error) {
@@ -117,7 +130,7 @@ export const usePostActions = () => {
 
     try {
       const { data } = await Axios.put(
-        `/api/posts/status/${info.id}`,
+        `${process.env.REACT_APP_URL}/api/posts/status/${info.id}`,
         info,
         header
       );
@@ -137,7 +150,11 @@ export const usePostActions = () => {
     dispatch({ type: UPDATE_POST_REQUEST });
     console.log(userInfo.token);
     try {
-      const { data } = await Axios.put(`/api/posts/${info.id}`, info, header);
+      const { data } = await Axios.put(
+        `${process.env.REACT_APP_URL}/api/posts/${info.id}`,
+        info,
+        header
+      );
 
       dispatch({ type: UPDATE_POST_SUCCESS, payload: data });
     } catch (error) {
@@ -153,7 +170,7 @@ export const usePostActions = () => {
     dispatch({ type: BOOKMARK_POST_REQUEST });
     try {
       const { data } = await Axios.put(
-        `/api/users/bookmark-posts/${id}`,
+        `${process.env.REACT_APP_URL}/api/users/bookmark-posts/${id}`,
         {},
         header
       );
@@ -171,7 +188,10 @@ export const usePostActions = () => {
     dispatch({ type: DELETE_POST_REQUEST });
 
     try {
-      const { data } = await Axios.delete(`/api/posts/${id}`, header);
+      const { data } = await Axios.delete(
+        `${process.env.REACT_APP_URL}/api/posts/${id}`,
+        header
+      );
 
       dispatch({ type: DELETE_POST_SUCCESS, payload: data });
     } catch (error) {
