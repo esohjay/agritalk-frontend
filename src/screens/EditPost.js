@@ -74,11 +74,15 @@ function EditPost(props) {
 
     setLoadingUpload(true);
     try {
-      const { data } = await Axios.post(`/api/posts/upload`, bodyFormData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const { data } = await Axios.post(
+        `${process.env.REACT_APP_URL}/api/posts/upload`,
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       uploadedImages.push(data);
       setLoadingUpload(false);
       setImageUploaded(uploadedImages);
@@ -98,11 +102,15 @@ function EditPost(props) {
 
     setLoadingUpload(true);
     try {
-      const { data } = await Axios.post(`/api/posts/upload`, bodyFormData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const { data } = await Axios.post(
+        `${process.env.REACT_APP_URL}/api/posts/upload`,
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       uploadedImages.push(data);
       setLoadingUpload(false);
       setImageUploaded(uploadedImages);
