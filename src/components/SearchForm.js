@@ -1,25 +1,30 @@
-import React from "react";
-//import { useGlobalContext } from '../context'
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+//import { useGlobalContext } from "../context/store";
+import { usePostActions } from "../actions/postActions";
 export default function SearchForm() {
-  //const { setSearchTerm } = useGlobalContext()
-  const searchValue = React.useRef("");
+  const history = useHistory();
+  const { setTitle } = usePostActions();
 
-  /*React.useEffect(() => {
-    searchValue.current.focus()
-  }, [])
+  const [search, setSearch] = useState("");
 
-  function searchCocktail() {
-    setSearchTerm(searchValue.current.value)
-  }*/
   function handleSubmit(e) {
     e.preventDefault();
+    setTitle(search);
+    history.push(`/posts/search`);
   }
   return (
     <section className="section search">
       <form className="search-form" onSubmit={handleSubmit}>
         <div className="form-control">
           <label htmlFor="name">search for post</label>
-          <input type="text" name="name" id="name" ref={searchValue} />
+          <input
+            type="text"
+            className="form-input"
+            value={search}
+            id="name"
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
       </form>
     </section>

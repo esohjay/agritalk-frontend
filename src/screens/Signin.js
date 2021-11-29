@@ -1,66 +1,92 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { useUserContext } from "../context/userContext";
 
 import { useUserActions } from "../actions/userActions";
-
-import { useHistory } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useHistory, Link } from "react-router-dom";
+import BackButton from "../components/BackButton";
 function AddPost() {
-  const [info, setInfo] = useState("");
+  //const [info, setInfo] = useState("");
 
-  const [password, setPassword] = useState("");
+  // const [password, setPassword] = useState("");
 
   const { state } = useUserContext();
   const { loading, success, userInfo } = state;
   const history = useHistory();
   const { signinUser } = useUserActions();
 
-  const handleSubmit = (e) => {
+  /*const handleSubmit = (e) => {
     e.preventDefault();
 
     signinUser({ password, info });
-  };
+  };*/
   useEffect(() => {
     if (userInfo) {
       history.goBack();
     }
   });
-  console.log(state);
-  //console.log(post);
-  const hist = (e) => {
-    history.goBack();
-  };
+  const formik = useFormik({
+    initialValues: {
+      info: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      info: Yup.string().required("Enter username or email"),
+
+      password: Yup.string().required("Enter your password"),
+    }),
+    onSubmit: (values) => {
+      signinUser(values);
+    },
+  });
   return (
     <section className="section">
+      <BackButton history={history} />
       <section className="section-center">
         <div className="form-section">
-          <h3>welcome back</h3>
+          <h3>Sign In</h3>
           {loading && <h3>...Loading</h3>}
           {success && <h3>Signed in</h3>}
-          <form className="form-body" onSubmit={handleSubmit}>
+          <form className="form-body" onSubmit={formik.handleSubmit}>
             <div className="form-control">
-              <label htmlFor="username">Username</label>
+              <label htmlFor="info">Username/Email</label>
               <input
                 type="text"
-                name="username"
-                id="username"
-                value={info}
-                onChange={(e) => setInfo(e.target.value)}
+                name="info"
+                id="info"
+                className="form-input-mini"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.info}
               />
+              {formik.touched.info && formik.errors.info ? (
+                <div className="delete">{formik.errors.info}</div>
+              ) : null}
             </div>
             <div className="form-control">
               <label htmlFor="password">Password</label>
               <input
                 type="password"
                 name="password"
+                className="form-input-mini"
                 id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password}
               />
+              {formik.touched.password && formik.errors.password ? (
+                <div className="delete">{formik.errors.password}</div>
+              ) : null}
             </div>
-            <button className="btn btn-block">login</button>
+            <p>
+              Don't have an account? <Link to="/register"> Register</Link>
+            </p>
+            <button className="btn" type="submit">
+              login
+            </button>
           </form>
-          <button onClick={hist}>back</button>
         </div>
       </section>
     </section>

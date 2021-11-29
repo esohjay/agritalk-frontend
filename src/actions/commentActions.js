@@ -5,27 +5,35 @@ import {
   CREATE_COMMENT_REQUEST,
   CREATE_COMMENT_SUCCESS,
   CREATE_COMMENT_FAIL,
+  CREATE_COMMENT_RESET,
   UPDATE_COMMENT_REQUEST,
   UPDATE_COMMENT_SUCCESS,
   UPDATE_COMMENT_FAIL,
+  UPDATE_COMMENT_RESET,
   LIKE_COMMENT_REQUEST,
   LIKE_COMMENT_SUCCESS,
   LIKE_COMMENT_FAIL,
+  LIKE_COMMENT_RESET,
   DELETE_COMMENT_REQUEST,
   DELETE_COMMENT_SUCCESS,
   DELETE_COMMENT_FAIL,
+  DELETE_COMMENT_RESET,
   CREATE_REPLY_REQUEST,
   CREATE_REPLY_SUCCESS,
   CREATE_REPLY_FAIL,
+  CREATE_REPLY_RESET,
   UPDATE_REPLY_REQUEST,
   UPDATE_REPLY_SUCCESS,
   UPDATE_REPLY_FAIL,
+  UPDATE_REPLY_RESET,
   LIKE_REPLY_REQUEST,
   LIKE_REPLY_SUCCESS,
   LIKE_REPLY_FAIL,
+  LIKE_REPLY_RESET,
   DELETE_REPLY_REQUEST,
   DELETE_REPLY_SUCCESS,
   DELETE_REPLY_FAIL,
+  DELETE_REPLY_RESET,
 } from "../constants/comment";
 
 export const useCommentActions = () => {
@@ -36,7 +44,7 @@ export const useCommentActions = () => {
   };
   const createComment = async (id, info) => {
     dispatch({ type: CREATE_COMMENT_REQUEST });
-    console.log(userInfo);
+    dispatch({ type: CREATE_COMMENT_RESET });
     try {
       const { data } = await Axios.post(
         `${process.env.REACT_APP_URL}/api/comments/${id}`,
@@ -56,6 +64,7 @@ export const useCommentActions = () => {
 
   const editComment = async (info) => {
     dispatch({ type: UPDATE_COMMENT_REQUEST });
+    dispatch({ type: UPDATE_COMMENT_RESET });
 
     try {
       const { data } = await Axios.put(
@@ -76,6 +85,7 @@ export const useCommentActions = () => {
 
   const deleteComment = async (id) => {
     dispatch({ type: DELETE_COMMENT_REQUEST });
+    dispatch({ type: DELETE_COMMENT_RESET });
 
     try {
       const { data } = await Axios.delete(
@@ -96,6 +106,7 @@ export const useCommentActions = () => {
 
   const createReply = async (id, info) => {
     dispatch({ type: CREATE_REPLY_REQUEST });
+    dispatch({ type: CREATE_REPLY_RESET });
     try {
       const { data } = await Axios.post(
         `${process.env.REACT_APP_URL}/api/comments/reply/${id}`,
@@ -115,6 +126,7 @@ export const useCommentActions = () => {
 
   const likeComment = async (id) => {
     dispatch({ type: LIKE_COMMENT_REQUEST });
+    dispatch({ type: LIKE_COMMENT_RESET });
 
     try {
       const { data } = await Axios.put(
@@ -135,6 +147,7 @@ export const useCommentActions = () => {
   };
   const editReply = async (info) => {
     dispatch({ type: UPDATE_REPLY_REQUEST });
+    dispatch({ type: UPDATE_REPLY_RESET });
 
     try {
       const { data } = await Axios.put(
@@ -154,6 +167,7 @@ export const useCommentActions = () => {
   };
   const deleteReply = async (id) => {
     dispatch({ type: DELETE_REPLY_REQUEST });
+    dispatch({ type: DELETE_REPLY_RESET });
 
     try {
       const { data } = await Axios.delete(
@@ -173,6 +187,7 @@ export const useCommentActions = () => {
   };
   const likeReply = async (id) => {
     dispatch({ type: LIKE_REPLY_REQUEST });
+    dispatch({ type: LIKE_REPLY_RESET });
 
     try {
       const { data } = await Axios.put(

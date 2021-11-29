@@ -1,23 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Axios from "axios";
 import { useGlobalContext } from "../context/store";
 import { usePostActions } from "../actions/postActions";
 import { EditorState, convertToRaw } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
+import { useHistory } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import BackButton from "../components/BackButton";
 import "../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-function AddPost(props) {
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
-  // const [isPublished, setIsPublished] = useState(false);
+import Loader from "../components/Loader";
+import Notification from "../components/Notification";
+function AddPost() {
+  const history = useHistory();
+  //const [title, setTitle] = useState("");
+  //  const [category, setCategory] = useState("");
+
   const [isDraft, setIsDraft] = useState(false);
-  const [tags, setTags] = useState("");
+  // const [tags, setTags] = useState("");
   const [description, setDescription] = useState(EditorState.createEmpty());
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [imageUploaded, setImageUploaded] = useState({});
   const [image, setImage] = useState({});
   const [errorUpload, setErrorUpload] = useState("");
+  const [isErrorUpload, setIsErrorUpload] = useState(false);
   const { state } = useGlobalContext();
-  const { loading, success, createdPost } = state;
+  const { loading } = state;
 
   const { createPost } = usePostActions();
 
@@ -29,8 +37,7 @@ function AddPost(props) {
     const bodyFormData = new FormData();
 
     bodyFormData.append("file", files);
-    console.log(...bodyFormData);
-    console.log(files);
+
     setLoadingUpload(true);
     try {
       const { data } = await Axios.post(`/api/posts/upload`, bodyFormData, {
@@ -44,14 +51,11 @@ function AddPost(props) {
       setImage(data);
     } catch (error) {
       setErrorUpload(error.message);
+      setIsErrorUpload(true);
       setLoadingUpload(false);
     }
   };
-  useEffect(() => {
-    if (createdPost) {
-      props.history.push(`/post/${createdPost._id}`);
-    }
-  });
+
   const uploadCallback = async (file) => {
     const bodyFormData = new FormData();
 
@@ -70,33 +74,69 @@ function AddPost(props) {
       return { data: { link: data.url } };
     } catch (error) {
       setErrorUpload(error.message);
+      setIsErrorUpload(true);
       setLoadingUpload(false);
     }
   };
 
-  const handleSubmit = (e) => {
+  /*const handleSubmit = (e) => {
     e.preventDefault();
 
-    createPost({
-      title,
-      tags,
-      category,
-      image,
-      isDraft,
-      //isPublished,
-      postImages: imageUploaded,
-      description: convertToRaw(description.getCurrentContent()),
-    });
-  };
+    createPost(
+      {
+        title,
+        tags,
+        category,
+        image,
+        isDraft,
+        //isPublished,
+        postImages: imageUploaded,
+        description: convertToRaw(description.getCurrentContent()),
+      },
+      history
+    );
+  };*/
+
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      category: "",
+      tags: "",
+    },
+    validationSchema: Yup.object({
+      title: Yup.string().required("Enter post title"),
+      category: Yup.string().required("Select category"),
+      tags: Yup.string().required("Enter related tags"),
+    }),
+    onSubmit: (values) => {
+      createPost(
+        {
+          ...values,
+          image,
+          isDraft,
+          postImages: imageUploaded,
+          description: convertToRaw(description.getCurrentContent()),
+        },
+        history
+      );
+    },
+  });
 
   return (
     <section className="section">
+      <BackButton history={history} />
       <section className="section-center">
         <div className="form-section">
           <h3>Add Post</h3>
-          {loading && <h3>...Loading</h3>}
-          {success && <h3>...Posted</h3>}
-          <form className="form-body" onSubmit={handleSubmit}>
+          {loading && <Loader size={30} loading={loading} />}
+          {errorUpload && (
+            <Notification
+              message={errorUpload}
+              success={false}
+              show={isErrorUpload}
+            />
+          )}
+          <form className="form-body" onSubmit={formik.handleSubmit}>
             <div className="form-control">
               <label htmlFor="title">Title</label>
               <input
@@ -104,20 +144,38 @@ function AddPost(props) {
                 name="title"
                 id="title"
                 className="form-input"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.title}
               />
+              {formik.touched.title && formik.errors.title ? (
+                <div className="delete">{formik.errors.title}</div>
+              ) : null}
             </div>
+
             <div className="form-control">
               <label htmlFor="category">Category</label>
-              <input
-                type="text"
-                name="category"
-                id="category"
-                className="form-input"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              />
+              <div>
+                <select
+                  id="category"
+                  name="category"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="form-input"
+                >
+                  <option value="">Choose Category</option>
+                  <option value="General">General</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Production">Production</option>
+                  <option value="News">Agribusiness</option>
+                  <option value="News">News</option>
+                  <option value="Technology">Technology</option>
+                </select>
+              </div>
+              {formik.touched.category && formik.errors.category ? (
+                <div className="delete">{formik.errors.category}</div>
+              ) : null}
             </div>
             <div className="form-control">
               <label htmlFor="tags">Tags</label>
@@ -126,11 +184,16 @@ function AddPost(props) {
                 name="tags"
                 id="tags"
                 className="form-input"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.tags}
               />
               <em>Separate each tag with space</em>
+              {formik.touched.tags && formik.errors.tags ? (
+                <div className="delete">{formik.errors.tags}</div>
+              ) : null}
             </div>
+
             <div className="form-control">
               <label htmlFor="image">Display Image</label>
               <input
@@ -141,6 +204,13 @@ function AddPost(props) {
                 onChange={uploadFileHandler}
               />
             </div>
+            {loadingUpload && (
+              <Loader
+                size={25}
+                text="Uploading Image"
+                loading={loadingUpload}
+              />
+            )}
             <div className="form-control">
               <label htmlFor="post">Write Post</label>
               <Editor
@@ -169,10 +239,18 @@ function AddPost(props) {
                 placeholder="Compose your post"
               />
             </div>
-            <button onClick={() => setIsDraft(true)} className="btn-block btn">
-              Save
-            </button>
-            <button className="btn-block btn">Publish</button>
+            <div className="buttons">
+              <button
+                type="submit"
+                onClick={() => setIsDraft(true)}
+                className="btn buttons"
+              >
+                Save
+              </button>
+              <button className="btn" type="submit">
+                Publish
+              </button>
+            </div>
           </form>
         </div>
       </section>

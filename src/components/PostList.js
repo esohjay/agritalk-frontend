@@ -3,29 +3,41 @@ import { useGlobalContext } from "../context/store";
 import { usePostActions } from "../actions/postActions";
 import Pagination from "../components/Pagination";
 import Post from "../components/Post";
-
+import Notification from "../components/Notification";
+import { BOOKMARK_POST_RESET } from "../constants/post";
+import Loader from "../components/Loader";
 export default function PostList() {
-  const { state } = useGlobalContext();
-  const { posts, loading } = state;
-  const { getPosts } = usePostActions();
+  const { state, dispatch } = useGlobalContext();
+  const { posts, loading, bookmarked } = state;
+  const { getPosts, bookmarkPost } = usePostActions();
   useEffect(() => {
+    dispatch({ type: BOOKMARK_POST_RESET });
     getPosts({});
-  }, []);
-  if (loading) {
-    return <h1>Loading..</h1>;
-  }
+  }, [getPosts, dispatch]);
+
   if (posts && posts.posts?.length < 1) {
-    return (
-      <h2 className="section-title">no posts matched your search criteria</h2>
-    );
+    return <h2 className="section-title">no posts yet</h2>;
   }
 
   return (
     <section className="section">
-      <h2 className="section-title">posts</h2>
+      <Notification
+        message={"Added to reading list"}
+        success={true}
+        show={bookmarked}
+      />{" "}
+      {loading && <Loader size={30} loading={loading} />}
       <div className="post-list-center">
-        {posts.posts?.map((post) => {
-          return <Post key={post._id} post={post} />;
+        {posts?.posts?.map((post) => {
+          return (
+            <Post
+              key={post._id}
+              post={post}
+              bookmark={() =>
+                bookmarkPost({ id: post?._id, title: post?.title })
+              }
+            />
+          );
         })}
       </div>
       {posts && (

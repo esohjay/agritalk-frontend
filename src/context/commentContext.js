@@ -18,11 +18,13 @@ const initialState = {
   likedReply: {},
   success: false,
   commentUpdated: false,
-  //commentLiked: false,
+  commentLiked: false,
   replyLiked: false,
   commentDeleted: false,
   replyUpdated: false,
   replyDeleted: false,
+  replied: false,
+  commented: false,
 };
 
 const CommentProvider = ({ children }) => {

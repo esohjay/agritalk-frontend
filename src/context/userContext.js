@@ -14,7 +14,12 @@ const initialState = {
   userInfo,
   updatedPassword: false,
   user: {},
+  users: [],
+  message: {},
+  messageSent: false,
   success: false,
+  madeAdmin: false,
+  userDeleted: false,
 };
 
 const UserProvider = ({ children }) => {

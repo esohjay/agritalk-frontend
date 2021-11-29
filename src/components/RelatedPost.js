@@ -4,26 +4,25 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function RelatedPost({ posts }) {
-  const relatedPost = [];
-  if (posts && posts.length) {
-    posts.forEach((post, i) => {
-      if (i <= 4) {
-        relatedPost.push(post);
-      }
-    });
-  }
-
   return (
-    <div className="related-post">
-      {relatedPost?.map((post) => {
-        return (
-          <ul key={post._id}>
-            <li>
-              <Link to={`/post/${post._id}`}>{post.title}</Link>
+    <div className="related-posts">
+      <ul>
+        {posts?.map((post) => {
+          return (
+            <li key={post._id}>
+              <div className="related-post">
+                <img
+                  src={post.image ? post?.image.url : ""}
+                  alt={post?.title}
+                  className="photo"
+                />
+
+                <Link to={`/post/${post._id}`}>{post.title}</Link>
+              </div>
             </li>
-          </ul>
-        );
-      })}
+          );
+        })}
+      </ul>
     </div>
   );
 }

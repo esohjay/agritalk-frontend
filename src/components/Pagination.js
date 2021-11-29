@@ -1,12 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { usePostActions } from "../actions/postActions";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
+import { useGlobalContext } from "../context/store";
 
 export default function Pagination({ pageInfo }) {
-  const [pageNumberLimit] = useState(2);
-  const [maxPageNumberLimit, setMaxPageNumberLimit] = useState(2);
+  const { state } = useGlobalContext();
+  const [pageNumberLimit] = useState(5);
+  const [maxPageNumberLimit, setMaxPageNumberLimit] = useState(5);
   const [minPageNumberLimit, setMinPageNumberLimit] = useState(0);
+
   const { getPosts } = usePostActions();
+  useEffect(() => {
+    if (state.page > maxPageNumberLimit) {
+      setMaxPageNumberLimit(maxPageNumberLimit + pageNumberLimit);
+      setMinPageNumberLimit(minPageNumberLimit + pageNumberLimit);
+    }
+  }, [state.page, maxPageNumberLimit, minPageNumberLimit, pageNumberLimit]);
+  useEffect(() => {
+    if (state.page - 1 < minPageNumberLimit) {
+      setMaxPageNumberLimit(maxPageNumberLimit - pageNumberLimit);
+      setMinPageNumberLimit(minPageNumberLimit - pageNumberLimit);
+    }
+  }, [state.page, maxPageNumberLimit, minPageNumberLimit, pageNumberLimit]);
   const pages = [];
   if (pageInfo.totalPages) {
     for (let i = 1; i <= pageInfo.totalPages; i++) {
@@ -32,7 +47,7 @@ export default function Pagination({ pageInfo }) {
       return null;
     }
   });
-  const pageIncrementBtn = () => {
+  /* const pageIncrementBtn = () => {
     setMinPageNumberLimit(minPageNumberLimit + pageNumberLimit);
     setMaxPageNumberLimit(maxPageNumberLimit + pageNumberLimit);
   };
@@ -40,25 +55,15 @@ export default function Pagination({ pageInfo }) {
   const pageDecrementBtn = () => {
     setMaxPageNumberLimit(maxPageNumberLimit - pageNumberLimit);
     setMinPageNumberLimit(minPageNumberLimit - pageNumberLimit);
-  };
+  };*/
 
   const handleNextbtn = () => {
     getPosts({ page: pageInfo.nextPage });
-
-    if (pageInfo.page + 1 > maxPageNumberLimit) {
-      setMaxPageNumberLimit(maxPageNumberLimit + pageNumberLimit);
-      setMinPageNumberLimit(minPageNumberLimit + pageNumberLimit);
-    }
   };
   const handlePrevbtn = () => {
     getPosts({ page: pageInfo.prevPage });
-
-    if ((pageInfo.page - 1) % pageNumberLimit === 0) {
-      setMaxPageNumberLimit(maxPageNumberLimit - pageNumberLimit);
-      setMinPageNumberLimit(minPageNumberLimit - pageNumberLimit);
-    }
   };
-  console.log(pageInfo.prevPage);
+
   const pageHandler = (page) => {
     getPosts({ page: page });
   };
@@ -71,18 +76,11 @@ export default function Pagination({ pageInfo }) {
               <FaChevronLeft />
             </button>
           )}
-          {minPageNumberLimit >= 1 && (
-            <button onClick={pageDecrementBtn} className="page-btn">
-              ...
-            </button>
-          )}
 
           {renderPageNumbers}
 
           {pages.length > maxPageNumberLimit && (
-            <button onClick={pageIncrementBtn} className="page-btn">
-              ...
-            </button>
+            <button className="page-btn">...</button>
           )}
 
           {pageInfo.hasNextPage && (

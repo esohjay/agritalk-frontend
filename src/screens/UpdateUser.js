@@ -2,14 +2,18 @@ import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { useUserContext } from "../context/userContext";
 import { useUserActions } from "../actions/userActions";
-
+import Loader from "../components/Loader";
+import Notification from "../components/Notification";
+import { useHistory } from "react-router-dom";
+import BackButton from "../components/BackButton";
 function UpdateUser(props) {
   const id = props.match.params.id;
+  const history = useHistory();
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [twitter, setTwitter] = useState("");
   const [bio, setBio] = useState("");
-
+  const [isErrorUpload, setIsErrorUpload] = useState(false);
   const [whatsapp, setWhatsapp] = useState("");
   const [instagram, setInstagram] = useState("");
   const [facebook, setFacebook] = useState("");
@@ -23,7 +27,7 @@ function UpdateUser(props) {
 
   const [errorUpload, setErrorUpload] = useState("");
   const { state } = useUserContext();
-  const { loading, updatedUser, userInfo, user } = state;
+  const { loading, updatedUser, user } = state;
 
   const { updateUser, getUserDetails } = useUserActions();
 
@@ -42,21 +46,15 @@ function UpdateUser(props) {
       setWhatsapp(user.socials?.whatsapp);
       setLocation(user.location);
     }
-  }, [updatedUser, user, id]);
-  useEffect(() => {
-    if (updatedUser) {
-      props.history.push(`/user/${userInfo._id}`);
-    }
-  }, [updatedUser, userInfo, props]);
-  console.log(state);
+  }, [updatedUser, user, id, getUserDetails]);
+
   const uploadFileHandler = async (e) => {
     const files = e.target.files[0];
 
     const bodyFormData = new FormData();
 
     bodyFormData.append("file", files);
-    console.log(...bodyFormData);
-    console.log(files);
+
     setLoadingUpload(true);
     try {
       const { data } = await Axios.post(`/api/posts/upload`, bodyFormData, {
@@ -71,38 +69,49 @@ function UpdateUser(props) {
     } catch (error) {
       setErrorUpload(error.message);
       setLoadingUpload(false);
+      setIsErrorUpload(true);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    /* if (password !== confirmPassword) {
-      window.alert("password do not match");
-    }*/
+
     const socials = {
       facebook,
       instagram,
       twitter,
       whatsapp,
     };
-    updateUser({
-      id,
-      email,
-      location,
-      bio,
-      fullname,
-      username,
-      image,
-      //password,
-      socials,
-    });
+    updateUser(
+      {
+        id,
+        email,
+        location,
+        bio,
+        fullname,
+        username,
+        image,
+
+        socials,
+      },
+      history
+    );
   };
 
   return (
     <section className="section">
+      <BackButton history={history} />
+      {loading && <Loader size={30} loading={loading} />}
+      {errorUpload && (
+        <Notification
+          message={errorUpload}
+          success={false}
+          show={isErrorUpload}
+        />
+      )}
       <section className="section-center">
         <div className="form-section">
-          <h3>Edit Post</h3>
+          <h3>Update Profile</h3>
           {loading && <h3>...Loading</h3>}
           {updatedUser && <h3>Updated</h3>}
           <form className="form-body" onSubmit={handleSubmit}>
@@ -217,7 +226,13 @@ function UpdateUser(props) {
                 onChange={uploadFileHandler}
               />
             </div>
-
+            {loadingUpload && (
+              <Loader
+                size={25}
+                text="Uploading Image"
+                loading={loadingUpload}
+              />
+            )}
             <button className="btn-block btn">Add Post</button>
           </form>
         </div>

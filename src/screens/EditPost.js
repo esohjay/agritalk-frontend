@@ -5,18 +5,30 @@ import { usePostActions } from "../actions/postActions";
 import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { useHistory } from "react-router-dom";
+import BackButton from "../components/BackButton";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+//import { UPDATE_POST_RESET } from "../constants/post";
 //import draftToHtml from "draftjs-to-html";
+import Loader from "../components/Loader";
+import Notification from "../components/Notification";
 function EditPost(props) {
   const id = props.match.params.id;
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
+  const history = useHistory();
+  // const [title, setTitle] = useState("");
+  const [tags, setTags] = useState([]);
+  // const [newTags, setNewTags] = useState("");
+
+  //const [category, setCategory] = useState("");
   const [isDraft, setIsDraft] = useState(false);
   const [description, setDescription] = useState(EditorState.createEmpty());
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [imageUploaded, setImageUploaded] = useState({});
   const [image, setImage] = useState({});
-  const [imageToDelete, setImageToDelete] = useState({});
+  const [imageToDelete, setImageToDelete] = useState("");
   const [errorUpload, setErrorUpload] = useState("");
+  const [isErrorUpload, setIsErrorUpload] = useState(false);
   const { state } = useGlobalContext();
   const { loading, post, editedPost } = state;
 
@@ -25,37 +37,33 @@ function EditPost(props) {
   const uploadedImages = [];
 
   useEffect(() => {
-    getPostDetails(id);
+    if (!id || !post || id !== post._id) {
+      getPostDetails(id);
+    } else {
+      setImage(post?.image);
+      setTags(post?.tags);
 
-    if (!id || !post || id !== post._id) {
-      getPostDetails(id);
-    } else {
-      setCategory(post?.category);
-      setTitle(post?.title);
-      setImage(post?.image);
       setIsDraft(post?.isDraft);
       const contentState = convertFromRaw(post?.description);
       const editorState = EditorState.createWithContent(contentState);
       setDescription(editorState);
     }
-  }, [editedPost]);
-  useEffect(() => {
+  }, [editedPost, getPostDetails, id, post]);
+  /* useEffect(() => {
     if (!id || !post || id !== post._id) {
       getPostDetails(id);
     } else {
-      setCategory(post?.category);
-      setTitle(post?.title);
       setImage(post?.image);
+      setTags(post?.tags);
+
       setIsDraft(post?.isDraft);
       const contentState = convertFromRaw(post?.description);
       const editorState = EditorState.createWithContent(contentState);
       setDescription(editorState);
     }
-    console.log("refresh");
-  }, [post, id]);
-  if (editedPost) {
-    props.history.push(`/post/${editedPost._id}`);
-  }
+  }, [post, id]);*/
+
+  //console.log(wantedTags);
   // console.log(post?.title.valueOf());
   const uploadFileHandler = async (e) => {
     const files = e.target.files[0];
@@ -63,8 +71,7 @@ function EditPost(props) {
     const bodyFormData = new FormData();
 
     bodyFormData.append("file", files);
-    console.log(...bodyFormData);
-    console.log(files);
+
     setLoadingUpload(true);
     try {
       const { data } = await Axios.post(`/api/posts/upload`, bodyFormData, {
@@ -80,6 +87,7 @@ function EditPost(props) {
     } catch (error) {
       setErrorUpload(error.message);
       setLoadingUpload(false);
+      setIsErrorUpload(true);
     }
   };
   //console.log(post);
@@ -102,26 +110,71 @@ function EditPost(props) {
     } catch (error) {
       setErrorUpload(error.message);
       setLoadingUpload(false);
+      setIsErrorUpload(true);
     }
   };
+  const wantedTags = [...tags];
 
-  const handleSubmit = (e) => {
+  const removeTags = (checked, tag) => {
+    if (!checked && !wantedTags.includes(tag)) {
+      wantedTags.push(tag);
+    } else if (checked && wantedTags.includes(tag)) {
+      const idx = wantedTags.indexOf(tag);
+      wantedTags.splice(idx, 1);
+    }
+  };
+  /*const handleSubmit = (e) => {
     e.preventDefault();
 
-    editPost({
-      id,
-      title,
-      category,
-      image,
-      isDraft,
-      postImages: imageUploaded,
-      description: convertToRaw(description.getCurrentContent()),
-      imageToDelete,
-    });
-  };
+    editPost(
+      {
+        id,
+        title,
+        category,
+        image,
+
+        newTags,
+        isDraft,
+        wantedTags,
+        postImages: imageUploaded,
+        description: convertToRaw(description.getCurrentContent()),
+        imageToDelete,
+      },
+      history
+    );
+  };*/
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      title: post?.title,
+      category: post?.category,
+      newTags: "",
+    },
+    validationSchema: Yup.object({
+      title: Yup.string().required("Enter post title"),
+      category: Yup.string().required("Select category"),
+      newTags: Yup.string(),
+    }),
+    onSubmit: (values) => {
+      editPost(
+        {
+          ...values,
+          image,
+          isDraft,
+          postImages: imageUploaded,
+          description: convertToRaw(description.getCurrentContent()),
+          id,
+          wantedTags,
+          imageToDelete,
+        },
+        history
+      );
+    },
+  });
 
   return (
     <section className="section">
+      <BackButton history={history} />
       <section className="section-center">
         <div className="form-section">
           {isDraft ? (
@@ -134,11 +187,17 @@ function EditPost(props) {
             </>
           )}
 
-          {loading && <h3>...Loading</h3>}
-          {editedPost && <h3>...Posted</h3>}
+          {loading && <Loader size={30} loading={loading} />}
+          {errorUpload && (
+            <Notification
+              message={errorUpload}
+              success={false}
+              show={isErrorUpload}
+            />
+          )}
 
           {post && (
-            <form className="form-body" onSubmit={handleSubmit}>
+            <form className="form-body" onSubmit={formik.handleSubmit}>
               <div className="form-control">
                 <label htmlFor="title">Title</label>
                 <input
@@ -146,20 +205,67 @@ function EditPost(props) {
                   name="title"
                   id="title"
                   className="form-input"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.title}
                 />
+                {formik.touched.title && formik.errors.title ? (
+                  <div className="delete">{formik.errors.title}</div>
+                ) : null}
               </div>
               <div className="form-control">
                 <label htmlFor="category">Category</label>
+                <div>
+                  <select
+                    id="category"
+                    name="category"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className="form-input"
+                  >
+                    <option value="General">General</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Production">Production</option>
+                    <option value="News">Agribusiness</option>
+                    <option value="News">News</option>
+                    <option value="Technology">Technology</option>
+                  </select>
+                </div>
+                {formik.touched.category && formik.errors.category ? (
+                  <div className="delete">{formik.errors.category}</div>
+                ) : null}
+              </div>
+              <div className="form-control">
+                <label htmlFor="newTags">Add more tags</label>
                 <input
                   type="text"
-                  name="category"
-                  id="category"
+                  name="newTags"
+                  id="newTags"
                   className="form-input"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.newTags}
                 />
+                <em>Separate each tag with space</em>
+                {formik.touched.newTags && formik.errors.newTags ? (
+                  <div className="delete">{formik.errors.newTags}</div>
+                ) : null}
+              </div>
+
+              <div className="tag-container">
+                <h4>Tick Tags You Wish To Remove</h4>
+                <div className="tags">
+                  {tags?.map((tag, i) => (
+                    <div key={`${tag}${i}`} className="tag">
+                      <input
+                        type="checkbox"
+                        onChange={(e) => removeTags(e.target.checked, tag)}
+                      ></input>
+                      <p>{tag}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
               <div className="form-control">
                 <label htmlFor="image">Change Display Image</label>
@@ -171,10 +277,13 @@ function EditPost(props) {
                   onChange={uploadFileHandler}
                 />
               </div>
-              <div>
-                <input type="checkbox" on />
-                <div></div>
-              </div>
+              {loadingUpload && (
+                <Loader
+                  size={25}
+                  text="Uploading Image"
+                  loading={loadingUpload}
+                />
+              )}
               <div className="form-control">
                 <label htmlFor="post">Write Post</label>
                 <Editor
@@ -205,13 +314,15 @@ function EditPost(props) {
               </div>
               <button
                 onClick={() => setIsDraft(true)}
-                className="btn-block btn"
+                type="submit"
+                className="btn buttons"
               >
                 Save
               </button>
               <button
                 onClick={() => setIsDraft(false)}
-                className="btn-block btn"
+                type="submit"
+                className="btn"
               >
                 Publish
               </button>

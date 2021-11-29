@@ -1,44 +1,182 @@
 import React from "react";
-
+import { FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import { MdLocationPin } from "react-icons/md";
+import { Link } from "react-router-dom";
+import { useUserContext } from "../context/userContext";
+import { useUserActions } from "../actions/userActions";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 function Footer() {
+  /*const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");*/
+  const { state } = useUserContext();
+  const { userInfo } = state;
+  const { signout, contactUs } = useUserActions();
+  /*useEffect(() => {
+    if (messageSent) {
+      setName("");
+      setEmail("");
+      setMessage("");
+    }
+  }, [messageSent]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    contactUs({ name, email, message });
+  };*/
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      name: "",
+      message: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required("Enter your name"),
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Enter email address"),
+      message: Yup.string().required("Enter your message"),
+    }),
+    onSubmit: (values) => {
+      contactUs(values);
+    },
+  });
   return (
     <div>
       <footer>
-        <div class="content">
-          <div class="left box">
-            <div class="upper">
-              <div class="topic">About us</div>
+        <div className="content">
+          <div className="left box">
+            <div className="upper">
+              <div className="topic">About us</div>
               <p>
                 AgriTalk is a platform where lovers of agriculture and food
                 production shares their views concerning latest trends in
                 agricultural and food production industry.
               </p>
             </div>
-            <div class="lower">
-              <div class="topic">Contact Admin</div>
-              <div class="phone">
+            <div className="lower">
+              <div className="topic">Contact Info</div>
+              <div className="phone">
+                <p>
+                  <i>
+                    <FaPhoneAlt /> +2348130680557
+                  </i>
+                </p>
+              </div>
+              <div className="email">
                 <>
-                  <i class="fas fa-phone-volume"></i>+2348130680557
+                  <p>
+                    <i>
+                      <FaEnvelope />
+                    </i>
+                    oluseye.olusoji@gmail.com
+                  </p>
                 </>
               </div>
-              <div class="email">
+              <div className="addrees">
                 <>
-                  <i class="fas fa-envelope"></i>oluseye.olusoji@gmail.com
+                  <p>
+                    <i>
+                      <MdLocationPin />
+                    </i>
+                    Bannex shopping complex, Abuja, Nigeria
+                  </p>
                 </>
               </div>
             </div>
           </div>
-          <div class="middle box">
-            <div class="topic">Enquiries</div>
+          <div className="middle box">
+            <div className="topic">Quick Links</div>
+            <div className="footer-links">
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/addpost">Add Post</Link>
+              </li>
+              {userInfo && (
+                <li>
+                  <Link to={`/user/${userInfo?._id}`}>Dashboard</Link>
+                </li>
+              )}
+              {!userInfo ? (
+                <>
+                  <li>
+                    <Link to={`/signin`}>Sign in</Link>
+                  </li>
+                  <li>
+                    <Link to={`/register`}>Register</Link>
+                  </li>
+                </>
+              ) : (
+                <li>
+                  <Link to="" onClick={() => signout()}>
+                    Sign Out
+                  </Link>
+                </li>
+              )}
+            </div>
           </div>
 
-          <div class="right box">
-            <div class="topic">Subscribe us</div>
+          <div className="right box">
+            <div className="topic">Contact us</div>
+            <div>
+              <form onSubmit={formik.handleSubmit}>
+                <div className="form-control">
+                  <label htmlFor="name">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    className="form-input"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.name}
+                  />
+                  {formik.touched.name && formik.errors.name ? (
+                    <div className="delete">{formik.errors.name}</div>
+                  ) : null}
+                </div>
+                <div className="form-control">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="text"
+                    name="email"
+                    id="email"
+                    className="form-input"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.email}
+                  />
+                  {formik.touched.email && formik.errors.email ? (
+                    <div className="delete">{formik.errors.email}</div>
+                  ) : null}
+                </div>
+                <div className="form-control">
+                  <label htmlFor="message">Message</label>
+                  <textarea
+                    type="text"
+                    name="message"
+                    id="message"
+                    className="form-input"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.message}
+                  />
+                  {formik.touched.message && formik.errors.message ? (
+                    <div className="delete">{formik.errors.message}</div>
+                  ) : null}
+                </div>
+                <button className="btn-block btn" type="submit">
+                  Send
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-        <div class="bottom">
+        <div className="bottom">
           <p>
-            Copyright © 2020 <>AgriTalk</> All rights reserved
+            Copyright © 2021 <>AgriTalk</> All rights reserved
           </p>
         </div>
       </footer>

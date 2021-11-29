@@ -6,6 +6,7 @@ function Homepage() {
   return (
     <main>
       <SearchForm />
+
       <PostList />
     </main>
   );
