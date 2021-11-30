@@ -10,7 +10,7 @@ export default function SearchResult() {
   const history = useHistory();
   //const { category, tag, title } = useParams();
   const { state } = useGlobalContext();
-  const { posts, loading, category, tag, title } = state;
+  const { posts, loading, category, tag, title, error } = state;
   const { getPosts } = usePostActions();
   useEffect(() => {
     getPosts({ category, tags: tag, title, searchScreen: true });
@@ -24,6 +24,7 @@ export default function SearchResult() {
 
   return (
     <section className="section">
+      {error && <p className="error-message">{error}</p>}
       <BackButton history={history} />
       {loading && <Loader loading={loading} />}
       <h2 className="section-title">

@@ -8,6 +8,7 @@ const AppContext = React.createContext();
 
 const initialState = {
   loading: false,
+  error: "",
   posts: [],
   post: {},
   postDeleted: false,

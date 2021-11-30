@@ -30,7 +30,7 @@ function EditPost(props) {
   const [errorUpload, setErrorUpload] = useState("");
   const [isErrorUpload, setIsErrorUpload] = useState(false);
   const { state } = useGlobalContext();
-  const { loading, post, editedPost } = state;
+  const { loading, post, editedPost, error } = state;
 
   const { editPost, getPostDetails } = usePostActions();
 
@@ -182,6 +182,7 @@ function EditPost(props) {
 
   return (
     <section className="section">
+      {error && <p className="error-message">{error}</p>}
       <BackButton history={history} />
       <section className="section-center">
         <div className="form-section">

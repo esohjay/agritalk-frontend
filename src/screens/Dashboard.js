@@ -30,7 +30,7 @@ function Dashboard(props) {
   const [openPassword, setOpenPassword] = useState(false);
   const { getUserDetails, updatePassword } = useUserActions();
   const { state } = useUserContext();
-  const { user, updatedPassword, userInfo, loading } = state;
+  const { user, updatedPassword, userInfo, loading, error } = state;
   const { getUserPosts, deletePost, changePostStatus, removeFromBookmark } =
     usePostActions();
   const { state: userPostsState } = useGlobalContext();
@@ -41,6 +41,7 @@ function Dashboard(props) {
     postDeleted,
     removedFromBookmark,
     loading: postLoading,
+    error: postError,
   } = userPostsState;
   const openBookmarkModal = (i) => {
     setIsBookmarkModal(true);
@@ -105,6 +106,8 @@ function Dashboard(props) {
 
   return (
     <div className="section">
+      {error && <p className="error-message">{error}</p>}
+      {postError && <p className="error-message">{postError}</p>}
       <BackButton history={history} />
       {loading && <Loader loading={loading} />}
       <section className="section-center">
@@ -211,6 +214,10 @@ function Dashboard(props) {
           <div className="section-center">
             <div className="card-center">
               <h4>Drafted Posts</h4>
+              <p>
+                Posts here are hidden from other users. Click on the eye icon to
+                make them visible.
+              </p>
               {userPosts?.map((post, i) => (
                 <div key={post._id}>
                   {i === index && (

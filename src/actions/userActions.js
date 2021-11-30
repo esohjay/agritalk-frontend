@@ -34,6 +34,7 @@ import {
   CONTACT_US_REQUEST,
   CONTACT_US_SUCCESS,
   CONTACT_US_FAIL,
+  CONTACT_US_RESET,
 } from "../constants/user";
 
 export const useUserActions = () => {
@@ -59,6 +60,7 @@ export const useUserActions = () => {
   };
   const contactUs = async (info) => {
     dispatch({ type: CONTACT_US_REQUEST });
+    dispatch({ type: CONTACT_US_RESET });
     try {
       const { data } = await Axios.post(
         `${process.env.REACT_APP_URL}/api/users/contact`,

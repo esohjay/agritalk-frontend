@@ -27,7 +27,7 @@ function UpdateUser(props) {
 
   const [errorUpload, setErrorUpload] = useState("");
   const { state } = useUserContext();
-  const { loading, updatedUser, user } = state;
+  const { loading, updatedUser, user, error } = state;
 
   const { updateUser, getUserDetails } = useUserActions();
 
@@ -104,6 +104,7 @@ function UpdateUser(props) {
 
   return (
     <section className="section">
+      {error && <p className="error-message">{error}</p>}
       <BackButton history={history} />
       {loading && <Loader size={30} loading={loading} />}
       {errorUpload && (

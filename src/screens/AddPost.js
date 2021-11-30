@@ -25,7 +25,7 @@ function AddPost() {
   const [errorUpload, setErrorUpload] = useState("");
   const [isErrorUpload, setIsErrorUpload] = useState(false);
   const { state } = useGlobalContext();
-  const { loading } = state;
+  const { loading, error } = state;
 
   const { createPost } = usePostActions();
 
@@ -132,6 +132,7 @@ function AddPost() {
 
   return (
     <section className="section">
+      {error && <p className="error-message">{error}</p>}
       <BackButton history={history} />
       <section className="section-center">
         <div className="form-section">
@@ -233,7 +234,7 @@ function AddPost() {
                   border: "2px solid green",
                   marginBottom: "20px",
                 }}
-                editorStyle={{ height: "300px", padding: "10px" }}
+                editorStyle={{ height: "500px", padding: "10px" }}
                 toolbar={{
                   image: {
                     uploadCallback,

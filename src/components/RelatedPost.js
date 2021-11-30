@@ -9,17 +9,21 @@ export default function RelatedPost({ posts }) {
       <ul>
         {posts?.map((post) => {
           return (
-            <li key={post._id}>
-              <div className="related-post">
-                <img
-                  src={post.image ? post?.image.url : ""}
-                  alt={post?.title}
-                  className="photo"
-                />
+            <div>
+              {!post.isDraft && (
+                <li key={post._id}>
+                  <div className="related-post">
+                    <img
+                      src={post.image ? post?.image.url : ""}
+                      alt={post?.title}
+                      className="photo"
+                    />
 
-                <Link to={`/post/${post._id}`}>{post.title}</Link>
-              </div>
-            </li>
+                    <Link to={`/post/${post._id}`}>{post.title}</Link>
+                  </div>
+                </li>
+              )}
+            </div>
           );
         })}
       </ul>

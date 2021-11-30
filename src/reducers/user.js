@@ -19,6 +19,7 @@ import {
   CONTACT_US_REQUEST,
   CONTACT_US_SUCCESS,
   CONTACT_US_FAIL,
+  CONTACT_US_RESET,
   ALL_USERS_REQUEST,
   ALL_USERS_SUCCESS,
   ALL_USERS_FAIL,
@@ -53,6 +54,12 @@ export const userReducer = (state, action) => {
         loading: false,
         message: action.payload,
         messageSent: true,
+      };
+    case CONTACT_US_RESET:
+      return {
+        ...state,
+
+        messageSent: false,
       };
     case CONTACT_US_FAIL:
       return { ...state, loading: false, error: action.payload };

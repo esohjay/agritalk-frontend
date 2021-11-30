@@ -28,7 +28,7 @@ export default function CommentSection({ comment, userInfo, i }) {
   const [replyBox, setReplyBox] = useState(false);
   const [reply, setReply] = useState("");
   const { state } = useCommentContext();
-  const { createdReply, commentUpdated, commentDeleted } = state;
+  const { createdReply, commentUpdated, commentDeleted, error } = state;
   // const [text, setText] = useState("");
   const { createReply, editComment, deleteComment, likeComment } =
     useCommentActions();
@@ -77,6 +77,7 @@ export default function CommentSection({ comment, userInfo, i }) {
 
   return (
     <div>
+      {error && <p className="error-message">{error}</p>}
       {i === index && (
         <Modal
           header="Delete?"

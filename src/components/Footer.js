@@ -6,24 +6,14 @@ import { useUserContext } from "../context/userContext";
 import { useUserActions } from "../actions/userActions";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Notification from "../components/Notification";
 function Footer() {
   /*const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");*/
   const { state } = useUserContext();
-  const { userInfo } = state;
+  const { userInfo, messageSent, error } = state;
   const { signout, contactUs } = useUserActions();
-  /*useEffect(() => {
-    if (messageSent) {
-      setName("");
-      setEmail("");
-      setMessage("");
-    }
-  }, [messageSent]);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    contactUs({ name, email, message });
-  };*/
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -37,12 +27,25 @@ function Footer() {
         .required("Enter email address"),
       message: Yup.string().required("Enter your message"),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       contactUs(values);
+      resetForm();
     },
   });
+
+  /* const handleSubmit = (e) => {
+    e.preventDefault();
+    contactUs({ name, email, message });
+  };*/
+
   return (
     <div>
+      {error && <p className="error-message">{error}</p>}
+      <Notification
+        message={"Message sent. Thanks for contacting us"}
+        success={true}
+        show={messageSent}
+      />
       <footer>
         <div className="content">
           <div className="left box">

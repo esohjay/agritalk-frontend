@@ -13,7 +13,7 @@ function AddPost() {
   // const [password, setPassword] = useState("");
 
   const { state } = useUserContext();
-  const { loading, success, userInfo } = state;
+  const { loading, success, userInfo, error } = state;
   const history = useHistory();
   const { signinUser } = useUserActions();
 
@@ -41,9 +41,11 @@ function AddPost() {
       signinUser(values);
     },
   });
+
   return (
     <section className="section">
       <BackButton history={history} />
+      {error && <p className="error-message">{error}</p>}
       <section className="section-center">
         <div className="form-section">
           <h3>Sign In</h3>

@@ -1062,7 +1062,7 @@ color: var(--primaryDarkColor);
   color: red;
 }
 .edit{
-  color: yellow;
+  color: var(--clr-primary-2);
 }
 .like{
   color: var(--primaryDarkColor);
@@ -1482,4 +1482,22 @@ LOADER
  }
 .back-btn-icon {
   font-size: 2.5rem;
+}
+.error-message {
+  
+ position: fixed;
+  top: 70px;
+  width: 90vw;
+ margin: 1rem auto;
+ padding: 1rem;
+ align-items: center;
+  background: transparent;
+  display: flex;
+  justify-content: space-between;
+  place-items: center;
+  transition: var(--transition);
+  color: red;
+  box-shadow: var(--light-shadow);
+  border: none;
+  border-radius: var(--radius);
 }

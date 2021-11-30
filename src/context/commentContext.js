@@ -25,6 +25,7 @@ const initialState = {
   replyDeleted: false,
   replied: false,
   commented: false,
+  error: "",
 };
 
 const CommentProvider = ({ children }) => {

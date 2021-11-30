@@ -16,7 +16,7 @@ export default function ReplySection({ reply, userInfo, i }) {
   // const [text, setText] = useState("");
   const { editReply, deleteReply, likeReply } = useCommentActions();
   const { state } = useCommentContext();
-  const { replyUpdated, replyDeleted } = state;
+  const { replyUpdated, replyDeleted, error } = state;
   const editReplyBtn = (id) => {
     if (!replyEdit) {
       setShowError(true);
@@ -41,6 +41,7 @@ export default function ReplySection({ reply, userInfo, i }) {
   }, [replyUpdated, replyDeleted]);
   return (
     <div>
+      {error && <p className="error-message">{error}</p>}
       {i === index && (
         <Modal
           header="Delete?"

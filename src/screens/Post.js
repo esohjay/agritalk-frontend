@@ -48,6 +48,7 @@ const Post = (props) => {
     replyLiked,
     replyDeleted,
     updated,
+    error: commentError,
   } = commentState;
   const {
     post,
@@ -59,6 +60,7 @@ const Post = (props) => {
     postLiked,
     bookmarked,
     loading,
+    error,
   } = state;
   const { id } = useParams();
   const {
@@ -134,13 +136,16 @@ const Post = (props) => {
     validationSchema: Yup.object({
       comment: Yup.string().required("Write comment"),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       createComment(id, values);
+      resetForm();
     },
   });
   return (
     <div className="section">
       <BackButton history={history} />
+      {error && <p className="error-message">{error}</p>}
+      {commentError && <p className="error-message">{commentError}</p>}
       <Modal
         header="Delete Post?"
         message="Post will be deleted permanently"

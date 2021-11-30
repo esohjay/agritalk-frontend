@@ -13,7 +13,7 @@ function AllPosts(props) {
   const { state } = useGlobalContext();
   const [isPostModal, setIsPostModal] = useState(false);
   const [search, setSearch] = useState("");
-  const { posts, loading, postDeleted, changedStatus } = state;
+  const { posts, loading, postDeleted, changedStatus, error } = state;
   const [index, setIndex] = useState("");
   const { getPosts, changePostStatus, deletePost } = usePostActions();
   useEffect(() => {
@@ -33,6 +33,7 @@ function AllPosts(props) {
   }
   return (
     <div className="section">
+      {error && <p className="error-message">{error}</p>}
       <BackButton history={history} />
       {loading && <Loader size={30} loading={loading} />}
       <section className="section search">

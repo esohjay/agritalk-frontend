@@ -13,7 +13,7 @@ function AllPosts(props) {
   const [isUserModal, setIsUserModal] = useState(false);
   const [isAdminModal, setIsAdminModal] = useState(false);
   const [search, setSearch] = useState("");
-  const { users, loading, userDeleted, madeAdmin } = state;
+  const { users, loading, userDeleted, madeAdmin, error } = state;
   const [index, setIndex] = useState("");
 
   const { getAllUsers, changeAdminStatus, deleteUser } = useUserActions();
@@ -42,6 +42,7 @@ function AllPosts(props) {
   }
   return (
     <div className="section">
+      {error && <p className="error-message">{error}</p>}
       <BackButton history={history} />
       {loading && <Loader size={30} loading={loading} />}
       <section className="section search">

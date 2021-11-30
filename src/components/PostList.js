@@ -8,7 +8,7 @@ import { BOOKMARK_POST_RESET } from "../constants/post";
 import Loader from "../components/Loader";
 export default function PostList() {
   const { state, dispatch } = useGlobalContext();
-  const { posts, loading, bookmarked } = state;
+  const { posts, loading, bookmarked, error } = state;
   const { getPosts, bookmarkPost } = usePostActions();
   useEffect(() => {
     dispatch({ type: BOOKMARK_POST_RESET });
@@ -21,6 +21,7 @@ export default function PostList() {
 
   return (
     <section className="section">
+      {error && <p className="error-message">{error}</p>}
       <Notification
         message={"Added to reading list"}
         success={true}
@@ -30,13 +31,16 @@ export default function PostList() {
       <div className="post-list-center">
         {posts?.posts?.map((post) => {
           return (
-            <Post
-              key={post._id}
-              post={post}
-              bookmark={() =>
-                bookmarkPost({ id: post?._id, title: post?.title })
-              }
-            />
+            <div key={post._id}>
+              {!post.isDraft && (
+                <Post
+                  post={post}
+                  bookmark={() =>
+                    bookmarkPost({ id: post?._id, title: post?.title })
+                  }
+                />
+              )}
+            </div>
           );
         })}
       </div>

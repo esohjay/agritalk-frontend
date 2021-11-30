@@ -14,7 +14,7 @@ function Register(props) {
   const [errorPassword, setErrorPassword] = useState(false);
   const [fullname, setFullname] = useState("");*/
   const { state } = useUserContext();
-  const { loading, success, userInfo } = state;
+  const { loading, success, userInfo, error } = state;
   const history = useHistory();
   const { createUser } = useUserActions();
 
@@ -62,6 +62,7 @@ function Register(props) {
 
   return (
     <section className="section">
+      {error && <p className="error-message">{error}</p>}
       <BackButton history={history} />
       {loading && <Loader loading={loading} />}
       <section className="section-center">
