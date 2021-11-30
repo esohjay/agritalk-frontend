@@ -183,6 +183,7 @@ function UpdateUser(props) {
                 type="text"
                 name="facebook"
                 id="facebook"
+                placeholder="your facebook id"
                 className="form-input"
                 value={facebook}
                 onChange={(e) => setFacebook(e.target.value)}
@@ -205,6 +206,7 @@ function UpdateUser(props) {
                 type="text"
                 name="whatsapp"
                 id="whatsapp"
+                placeholder="e.g 2348100000000"
                 className="form-input"
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
@@ -215,6 +217,7 @@ function UpdateUser(props) {
               <input
                 type="text"
                 name="instagram"
+                placeholder="e.g sean123"
                 id="instagram"
                 className="form-input"
                 value={instagram}
@@ -238,7 +241,7 @@ function UpdateUser(props) {
                 loading={loadingUpload}
               />
             )}
-            <button className="btn-block btn">Add Post</button>
+            <button className="btn-block btn">Update Profile</button>
           </form>
         </div>
       </section>
@@ -247,27 +250,3 @@ function UpdateUser(props) {
 }
 
 export default UpdateUser;
-/**
-<div className="form-control">
-              <label htmlFor="password">Password</label>
-              <input
-                type="text"
-                name="password"
-                id="password"
-                className="form-input"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="form-control">
-              <label htmlFor="ConfirmPassword">Confirm Password</label>
-              <input
-                type="text"
-                name="ConfirmPassword"
-                id="ConfirmPassword"
-                className="form-input"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
- */
