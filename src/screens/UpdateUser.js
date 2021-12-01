@@ -18,6 +18,7 @@ function UpdateUser(props) {
   const [instagram, setInstagram] = useState("");
   const [facebook, setFacebook] = useState("");
   const [location, setLocation] = useState("");
+  const [linkedIn, setLinkedIn] = useState("");
   const [username, setUsername] = useState("");
   //const [password, setPassword] = useState("");
   //const [confirmPassword, setConfirmPassword] = useState("");
@@ -42,6 +43,7 @@ function UpdateUser(props) {
       setBio(user.bio);
       setTwitter(user.socials?.twitter);
       setFacebook(user.socials?.facebook);
+      setLinkedIn(user.socials?.linkedIn);
       setInstagram(user.socials?.instagram);
       setWhatsapp(user.socials?.whatsapp);
       setLocation(user.location);
@@ -85,6 +87,7 @@ function UpdateUser(props) {
       instagram,
       twitter,
       whatsapp,
+      linkedIn,
     };
     updateUser(
       {
@@ -222,6 +225,18 @@ function UpdateUser(props) {
                 className="form-input"
                 value={instagram}
                 onChange={(e) => setInstagram(e.target.value)}
+              />
+            </div>
+            <div className="form-control">
+              <label htmlFor="linkedin">Linkedin</label>
+              <input
+                type="text"
+                name="linkedin"
+                placeholder="your linkedin profile link"
+                id="linkedin"
+                className="form-input"
+                value={linkedIn}
+                onChange={(e) => setLinkedIn(e.target.value)}
               />
             </div>
             <div className="form-control">

@@ -4,9 +4,9 @@ import {
   FaTwitter,
   FaFacebook,
   FaInstagram,
-  // FaHeart,
+  FaLinkedin,
 } from "react-icons/fa";
-function SocialIcon({ twitter, facebook, whatsapp, instagram }) {
+function SocialIcon({ twitter, facebook, whatsapp, instagram, linkedin }) {
   const whatsappLink = () => {
     window.location.href = `https://wa.me/${whatsapp}`;
   };
@@ -18,6 +18,9 @@ function SocialIcon({ twitter, facebook, whatsapp, instagram }) {
   };
   const facebookLink = () => {
     window.location.href = `https://facebook.com/${facebook}`;
+  };
+  const linkedinLink = () => {
+    window.location.href = `${linkedin}`;
   };
   return (
     <>
@@ -41,6 +44,11 @@ function SocialIcon({ twitter, facebook, whatsapp, instagram }) {
           {whatsapp && (
             <i onClick={whatsappLink} className="whatsapp">
               <FaWhatsapp />
+            </i>
+          )}
+          {linkedin && (
+            <i onClick={linkedinLink} className="facebook">
+              <FaLinkedin />
             </i>
           )}
         </div>
